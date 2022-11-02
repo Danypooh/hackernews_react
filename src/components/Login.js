@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, gql } from '@apollo/client';
-import { AUTH_TOKEN } from '../constants';
+import { AUTH_TOKEN } from './../constants';
 
 const SIGNUP_MUTATION = gql`
   mutation SignupMutation(
@@ -9,12 +9,15 @@ const SIGNUP_MUTATION = gql`
     $password: String!
     $name: String!
   ) {
-    signup(
+    createUser(
       email: $email
       password: $password
-      name: $name
+      username: $name
     ) {
-      token
+      user {
+        email
+        username
+      }
     }
   }
 `;
@@ -42,11 +45,11 @@ const Login = () => {
 
 const [login] = useMutation(LOGIN_MUTATION, {
   variables: {
-    email: formState.email,
+    username: formState.email,
     password: formState.password
   },
-  onCompleted: ({ login }) => {
-    localStorage.setItem(AUTH_TOKEN, login.token);
+  onCompleted: ({ tokenAuth }) => {
+    localStorage.setItem(AUTH_TOKEN, tokenAuth.token);
     navigate('/');
   }
 });
